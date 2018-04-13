@@ -31,8 +31,8 @@ library Buffer {
     }
 
     /**
-     * @dev Appends a byte array to the end of the buffer. Reverts if doing so
-     *      would exceed the capacity of the buffer.
+     * @dev Appends a byte array to the end of the buffer. Resizes if doing so
+     * would exceed the capacity of the buffer.
      * @param buf The buffer to append to.
      * @param data The data to append.
      * @return The original buffer.
@@ -78,7 +78,7 @@ library Buffer {
     }
 
     /**
-     * @dev Appends a byte to the end of the buffer. Reverts if doing so would
+     * @dev Appends a byte to the end of the buffer. Resizes if doing so would
      * exceed the capacity of the buffer.
      * @param buf The buffer to append to.
      * @param data The data to append.
@@ -103,7 +103,7 @@ library Buffer {
     }
 
     /**
-     * @dev Appends a byte to the end of the buffer. Reverts if doing so would
+     * @dev Appends a byte to the end of the buffer. Resizes if doing so would
      * exceed the capacity of the buffer.
      * @param buf The buffer to append to.
      * @param data The data to append.

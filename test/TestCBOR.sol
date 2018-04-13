@@ -8,7 +8,7 @@ contract TestCBOR {
 
     function getTestData() public pure returns(bytes) {
         Buffer.buffer memory buf;
-        Buffer.init(buf, 256);
+        Buffer.init(buf, 64);
 
         // Maps
         buf.startMap();
