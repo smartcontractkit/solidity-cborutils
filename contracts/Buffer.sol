@@ -13,6 +13,7 @@ library Buffer {
         assembly {
             let ptr := mload(0x40)
             mstore(buf, ptr)
+            mstore(ptr, 0)
             mstore(0x40, add(ptr, capacity))
         }
     }
