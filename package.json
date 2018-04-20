@@ -4,6 +4,7 @@
   },
   "homepage": "https://github.com/smartcontractkit/solidity-cborutils",
   "license": "MIT",
+  "name": "solidity-cborutils",
   "repository": {
     "type": "git",
     "url": "https://github.com/smartcontractkit/solidity-cborutils.git"
