@@ -1,5 +1,8 @@
-# solidity-cborutils
-Utilities for encoding [CBOR](http://cbor.io/) data in solidity
+# Buffer
+
+A Solidity library for creating and managing buffers.
+
+Also includes utilities for encoding data to [CBOR](http://cbor.io/) in Solidity.
 
 ## Install
 
