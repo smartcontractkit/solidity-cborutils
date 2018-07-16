@@ -5,12 +5,17 @@
   "homepage": "https://github.com/smartcontractkit/solidity-cborutils",
   "license": "MIT",
   "name": "solidity-cborutils",
+  "scripts": {
+    "test": "truffle test --network=ganache_cli"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/smartcontractkit/solidity-cborutils.git"
   },
   "version": "1.0.0",
   "devDependencies": {
-    "solium": "^1.1.7"
+    "solium": "^1.1.7",
+    "truffle": "^4.1.13",
+    "ganache-cli": "latest"
   }
 }
