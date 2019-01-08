@@ -1,0 +1,26 @@
+version: 2
+jobs:
+  truffle:
+    working_directory: ~/solidity-cborutils/
+    docker:
+      - image: circleci/node:10
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Install Packages
+          command: yarn install
+      - run:
+          name: Test Contracts
+          command: yarn truffle test --network test
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - truffle
