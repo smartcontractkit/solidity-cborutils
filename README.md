@@ -1,4 +1,4 @@
-# solidity-cborutils
+# solidity-cborutils [![CircleCI](https://circleci.com/gh/smartcontractkit/solidity-cborutils.svg?style=shield)](https://circleci.com/gh/smartcontractkit/solidity-cborutils)
 Utilities for encoding [CBOR](http://cbor.io/) data in solidity
 
 ## Install
