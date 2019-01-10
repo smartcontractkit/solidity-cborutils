@@ -123,7 +123,7 @@ library Buffer {
             let bufptr := mload(buf)
             // Length of existing buffer data
             let buflen := mload(bufptr)
-            // Address = buffer address + buffer length + sizeof(buffer length) + len
+            // Address = buffer address + buffer length + len
             let dest := add(add(bufptr, buflen), len)
             mstore(dest, or(and(mload(dest), not(mask)), data))
             // Update buffer length
