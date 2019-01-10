@@ -6,9 +6,10 @@ library Buffer {
         uint capacity;
     }
 
+    uint constant capacityMask = (2 ** 256) - 32; // ~0x1f
+
     function init(buffer memory buf, uint _capacity) internal pure {
-        uint capacity = _capacity;
-        if(capacity % 32 != 0) capacity += 32 - (capacity % 32);
+        uint capacity = (_capacity + 0x1f) & capacityMask;
         // Allocate space for the buffer data
         buf.capacity = capacity;
         assembly {
