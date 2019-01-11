@@ -72,4 +72,13 @@ contract TestBuffer {
       Assert.equal(buf.buf.length, 96, "Expected buffer length to be 33");
       Assert.equal(string(buf.buf), "012345678901234567890123456789010123456789012345678901234567890101234567890123456789012345678901", "Unexpected buffer contents");
     }
+
+    function testBufferZeroSized() public {
+      Buffer.buffer memory buf;
+      Buffer.init(buf, 0);
+      buf.append("first");
+      Assert.equal(buf.capacity, 32, "Expected buffer capacity to be 32");
+      Assert.equal(buf.buf.length, 5, "Expected buffer length to be 5");
+      Assert.equal(string(buf.buf), "first", "Unexpected buffer contents");
+    }
 }
