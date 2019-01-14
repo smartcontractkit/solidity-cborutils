@@ -6,9 +6,10 @@ library Buffer {
         uint capacity;
     }
 
+    uint constant capacityMask = (2 ** 256) - 32; // ~0x1f
+
     function init(buffer memory buf, uint _capacity) internal pure {
-        uint capacity = _capacity;
-        if(capacity % 32 != 0) capacity += 32 - (capacity % 32);
+        uint capacity = max(32, (_capacity + 0x1f) & capacityMask);
         // Allocate space for the buffer data
         buf.capacity = capacity;
         assembly {
@@ -122,7 +123,7 @@ library Buffer {
             let bufptr := mload(buf)
             // Length of existing buffer data
             let buflen := mload(bufptr)
-            // Address = buffer address + buffer length + sizeof(buffer length) + len
+            // Address = buffer address + buffer length + len
             let dest := add(add(bufptr, buflen), len)
             mstore(dest, or(and(mload(dest), not(mask)), data))
             // Update buffer length
