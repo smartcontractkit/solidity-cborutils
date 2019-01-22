@@ -8,6 +8,12 @@ $ git clone https://github.com/smartcontractkit/solidity-cborutils.git
 $ cd solidity-cborutils
 $ npm install
 ```
+## Usage
+
+The Buffer library is not intended to be moved to storage.
+In order to persist a Buffer in storage from memory,
+   you must manually copy each of its attributes to storage,
+   and back out when moving it back to memory.
 
 ## Test
 
