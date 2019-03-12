@@ -14,8 +14,8 @@
   },
   "version": "1.0.1",
   "devDependencies": {
-    "solium": "^1.1.7",
-    "truffle": "^4.1.13",
-    "ganache-cli": "latest"
+    "ganache-cli": "latest",
+    "solium": "^1.2.3",
+    "truffle": "^4.1.13"
   }
 }
