@@ -16,6 +16,7 @@
   "devDependencies": {
     "ganache-cli": "latest",
     "solium": "^1.2.3",
+    "@ensdomains/buffer": "0.0.10",
     "truffle": "^4.1.13"
   }
 }
