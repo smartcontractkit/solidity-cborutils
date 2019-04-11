@@ -1,6 +1,6 @@
 pragma solidity ^0.4.19;
 
-import "../contracts//Buffer.sol";
+import "@ensdomains/buffer/contracts/Buffer.sol";
 import "../contracts/CBOR.sol";
 
 contract TestCBOR {

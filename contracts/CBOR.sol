@@ -1,6 +1,6 @@
 pragma solidity ^0.4.19;
 
-import "./Buffer.sol";
+import "@ensdomains/buffer/contracts/Buffer.sol";
 
 library CBOR {
     using Buffer for Buffer.buffer;
@@ -15,24 +15,24 @@ library CBOR {
 
     function encodeType(Buffer.buffer memory buf, uint8 major, uint value) private pure {
         if(value <= 23) {
-            buf.append(uint8((major << 5) | value));
+            buf.appendUint8(uint8((major << 5) | value));
         } else if(value <= 0xFF) {
-            buf.append(uint8((major << 5) | 24));
+            buf.appendUint8(uint8((major << 5) | 24));
             buf.appendInt(value, 1);
         } else if(value <= 0xFFFF) {
-            buf.append(uint8((major << 5) | 25));
+            buf.appendUint8(uint8((major << 5) | 25));
             buf.appendInt(value, 2);
         } else if(value <= 0xFFFFFFFF) {
-            buf.append(uint8((major << 5) | 26));
+            buf.appendUint8(uint8((major << 5) | 26));
             buf.appendInt(value, 4);
         } else if(value <= 0xFFFFFFFFFFFFFFFF) {
-            buf.append(uint8((major << 5) | 27));
+            buf.appendUint8(uint8((major << 5) | 27));
             buf.appendInt(value, 8);
         }
     }
 
     function encodeIndefiniteLengthType(Buffer.buffer memory buf, uint8 major) private pure {
-        buf.append(uint8((major << 5) | 31));
+        buf.appendUint8(uint8((major << 5) | 31));
     }
 
     function encodeUInt(Buffer.buffer memory buf, uint value) internal pure {

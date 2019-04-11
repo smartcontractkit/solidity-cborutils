@@ -1,6 +1,5 @@
 const TestCBOR = artifacts.require("./TestCBOR.sol");
 const cbor = require("cbor");
-//const Buffer = require('buffer/').Buffer;
 
 contract('CBOR', function(accounts) {
   it('should return valid CBOR-encoded data', async function() {

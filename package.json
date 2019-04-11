@@ -12,10 +12,11 @@
     "type": "git",
     "url": "https://github.com/smartcontractkit/solidity-cborutils.git"
   },
-  "version": "1.0.2",
+  "version": "1.0.3",
   "devDependencies": {
     "ganache-cli": "latest",
     "solium": "^1.2.3",
+    "@ensdomains/buffer": "0.0.10",
     "truffle": "^4.1.13"
   }
 }
