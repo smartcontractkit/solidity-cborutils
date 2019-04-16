@@ -18,5 +18,8 @@
     "ganache-cli": "latest",
     "solium": "^1.2.3",
     "truffle": "^4.1.13"
-  }
+  },
+  "files": [
+    "contracts"
+  ]
 }
