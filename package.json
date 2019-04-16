@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@ensdomains/buffer": "0.0.10",
     "cbor": ">=4.0.0"
   },
   "homepage": "https://github.com/smartcontractkit/solidity-cborutils",
@@ -16,7 +17,6 @@
   "devDependencies": {
     "ganache-cli": "latest",
     "solium": "^1.2.3",
-    "@ensdomains/buffer": "0.0.10",
     "truffle": "^4.1.13"
   }
 }
