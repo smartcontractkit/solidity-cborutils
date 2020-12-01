@@ -40,7 +40,9 @@ library CBOR {
     }
 
     function encodeInt(Buffer.buffer memory buf, int value) internal pure {
-        if(value >= 0) {
+        if(value > 0xFFFFFFFFFFFFFFFF) {
+            encodeBytes(buf, abi.encodePacked(value));
+        } else if(value >= 0) {
             encodeType(buf, MAJOR_TYPE_INT, uint(value));
         } else {
             encodeType(buf, MAJOR_TYPE_NEGATIVE_INT, uint(-1 - value));

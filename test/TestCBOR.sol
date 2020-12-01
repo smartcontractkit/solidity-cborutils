@@ -40,4 +40,16 @@ contract TestCBOR {
 
         return buf.buf;
     }
+
+    function getTestDataBig() public pure returns(bytes) {
+        Buffer.buffer memory buf;
+        Buffer.init(buf, 28);
+
+        buf.startMap();
+        buf.encodeString("a");
+        buf.encodeInt(18446744073709551616);
+        buf.endSequence();
+
+        return buf.buf;
+    }
 }
