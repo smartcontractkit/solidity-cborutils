@@ -19,8 +19,10 @@ contract('CBOR', function(accounts) {
     var decoded = await cbor.decodeFirst(result);
 
     assert.deepEqual(decoded, {'bignums': [
-      Buffer.from([1, 0, 0, 0, 0, 0, 0, 0, 0]),
-      Buffer.from([64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+      Buffer.from('0100000000000000000', 'hex'),
+      Buffer.from('4000000000000000000000000000000000000000000000000000000000000000', 'hex'),
+      Buffer.from('ffffffffffffffffffffffffffffffffffffffffffffffff0000000000000000', 'hex'),
+      Buffer.from('c000000000000000000000000000000000000000000000000000000000000000', 'hex'),
     ]});
   });
 });
