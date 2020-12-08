@@ -41,7 +41,7 @@ library CBOR {
 
     function encodeInt(Buffer.buffer memory buf, int value) internal pure {
         if(value < -10000000000000000) {
-            encodeBigNum(buf, value);
+            encodeSignedBigNum(buf, value);
         } else if(value > 0xFFFFFFFFFFFFFFFF) {
             encodeBigNum(buf, value);
         } else if(value >= 0) {
@@ -64,7 +64,21 @@ library CBOR {
       for (uint8 i = 0; i < significantBytes.length; i++) {
           significantBytes[i]  = encoded[offset + i];
       }
-      encodeBytes(buf, significantBytes);
+      encodeType(buf, MAJOR_TYPE_BYTES, size);
+      buf.append(significantBytes);
+    }
+
+    function encodeSignedBigNum(Buffer.buffer memory buf, int input) internal pure {
+      uint value = uint(-1 - input);
+      uint8 size = byteCount(uint(value));
+      bytes memory significantBytes = new bytes(size);
+      bytes memory encoded = abi.encodePacked(value);
+      uint8 offset = 32 - size;
+      for (uint8 i = 0; i < significantBytes.length; i++) {
+          significantBytes[i]  = encoded[offset + i];
+      }
+      encodeType(buf, MAJOR_TYPE_STRING, size);
+      buf.append(significantBytes);
     }
 
     function byteCount(uint256 input) internal pure returns (uint8) {
