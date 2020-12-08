@@ -41,7 +41,7 @@ library CBOR {
 
     function encodeInt(Buffer.buffer memory buf, int value) internal pure {
         if(value > 0xFFFFFFFFFFFFFFFF) {
-            encodeBytes(buf, abi.encodePacked(value));
+            encodeBigNum(buf, value);
         } else if(value >= 0) {
             encodeType(buf, MAJOR_TYPE_INT, uint(value));
         } else {
@@ -52,6 +52,45 @@ library CBOR {
     function encodeBytes(Buffer.buffer memory buf, bytes value) internal pure {
         encodeType(buf, MAJOR_TYPE_BYTES, value.length);
         buf.append(value);
+    }
+
+    function encodeBigNum(Buffer.buffer memory buf, int value) internal pure {
+      uint8 offset = byteCount(value);
+      bytes memory significantBytes = new bytes(32 - offset);
+      bytes memory encoded = abi.encodePacked(value);
+      for (uint8 i = 0; i < significantBytes.length; i++) {
+          significantBytes[i]  = encoded[offset + i];
+      }
+      encodeBytes(buf, significantBytes);
+    }
+
+    function byteCount(int256 input) pure public returns (uint8) {
+        uint8 count = 0;
+        int256 value = input;
+        if (value >> 128 > 0) {
+            value = value >> 128;
+            count = 16;
+        }
+        if (value >> 64 > 0) {
+            value = value >> 64;
+            count += 8;
+        }
+        if (value >> 32 > 0) {
+            value = value >> 32;
+            count += 4;
+        }
+        if (value >> 16 > 0) {
+            value = value >> 16;
+            count += 2;
+        }
+        if (value >> 8 > 0) {
+            value = value >> 8;
+            count += 1;
+        }
+        if (value > 0) {
+            count += 1;
+        }
+        return count;
     }
 
     function encodeString(Buffer.buffer memory buf, string value) internal pure {

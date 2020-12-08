@@ -18,6 +18,10 @@ contract('CBOR', function(accounts) {
     var result = new Buffer((await test.getTestDataBig()).slice(2), 'hex');
     var decoded = await cbor.decodeFirst(result);
 
-    assert.deepEqual(decoded, {'a': Buffer.from([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0])});
+    assert.deepEqual(decoded, {'bignums': [
+      0,
+      Buffer.from([1, 0, 0, 0, 0, 0, 0, 0, 0]),
+      Buffer.from([64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+    ]});
   });
 });

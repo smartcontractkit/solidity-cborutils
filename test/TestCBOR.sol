@@ -46,8 +46,13 @@ contract TestCBOR {
         Buffer.init(buf, 28);
 
         buf.startMap();
-        buf.encodeString("a");
+        buf.encodeString("bignums");
+        buf.startArray();
+        buf.encodeInt(0);
         buf.encodeInt(18446744073709551616);
+        buf.encodeInt(28948022309329048855892746252171976963317496166410141009864396001978282409984);
+        buf.endSequence();
+
         buf.endSequence();
 
         return buf.buf;
