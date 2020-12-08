@@ -55,16 +55,17 @@ library CBOR {
     }
 
     function encodeBigNum(Buffer.buffer memory buf, int value) internal pure {
-      uint8 offset = byteCount(value);
-      bytes memory significantBytes = new bytes(32 - offset);
+      uint8 size = byteCount(value);
+      bytes memory significantBytes = new bytes(size);
       bytes memory encoded = abi.encodePacked(value);
+      uint8 offset = 32 - size;
       for (uint8 i = 0; i < significantBytes.length; i++) {
           significantBytes[i]  = encoded[offset + i];
       }
       encodeBytes(buf, significantBytes);
     }
 
-    function byteCount(int256 input) pure public returns (uint8) {
+    function byteCount(int256 input) internal pure returns (uint8) {
         uint8 count = 0;
         int256 value = input;
         if (value >> 128 > 0) {
