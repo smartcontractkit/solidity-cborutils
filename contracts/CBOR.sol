@@ -69,8 +69,7 @@ library CBOR {
           significantBytes[i]  = encoded[offset + i];
       }
       buf.appendUint8(uint8((MAJOR_TYPE_TAG << 5) | TAG_TYPE_BIGNUM));
-      encodeType(buf, MAJOR_TYPE_BYTES, size);
-      buf.append(significantBytes);
+      encodeBytes(buf, significantBytes);
     }
 
     function encodeSignedBigNum(Buffer.buffer memory buf, int input) internal pure {
@@ -83,8 +82,7 @@ library CBOR {
           significantBytes[i]  = encoded[offset + i];
       }
       buf.appendUint8(uint8((MAJOR_TYPE_TAG << 5) | TAG_TYPE_NEGATIVE_BIGNUM));
-      encodeType(buf, MAJOR_TYPE_BYTES, size);
-      buf.append(significantBytes);
+      encodeBytes(buf, significantBytes);
     }
 
     function byteCount(uint256 input) internal pure returns (uint8) {
