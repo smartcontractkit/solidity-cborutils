@@ -11,7 +11,11 @@ library CBOR {
     uint8 private constant MAJOR_TYPE_STRING = 3;
     uint8 private constant MAJOR_TYPE_ARRAY = 4;
     uint8 private constant MAJOR_TYPE_MAP = 5;
+    uint8 private constant MAJOR_TYPE_TAG = 6;
     uint8 private constant MAJOR_TYPE_CONTENT_FREE = 7;
+
+    uint8 private constant TAG_TYPE_BIGNUM = 2;
+    uint8 private constant TAG_TYPE_NEGATIVE_BIGNUM = 3;
 
     function encodeType(Buffer.buffer memory buf, uint8 major, uint value) private pure {
         if(value <= 23) {
@@ -64,6 +68,7 @@ library CBOR {
       for (uint8 i = 0; i < significantBytes.length; i++) {
           significantBytes[i]  = encoded[offset + i];
       }
+      buf.appendUint8(uint8((MAJOR_TYPE_TAG << 5) | TAG_TYPE_BIGNUM));
       encodeType(buf, MAJOR_TYPE_BYTES, size);
       buf.append(significantBytes);
     }
@@ -77,7 +82,8 @@ library CBOR {
       for (uint8 i = 0; i < significantBytes.length; i++) {
           significantBytes[i]  = encoded[offset + i];
       }
-      encodeType(buf, MAJOR_TYPE_STRING, size);
+      buf.appendUint8(uint8((MAJOR_TYPE_TAG << 5) | TAG_TYPE_NEGATIVE_BIGNUM));
+      encodeType(buf, MAJOR_TYPE_BYTES, size);
       buf.append(significantBytes);
     }
 

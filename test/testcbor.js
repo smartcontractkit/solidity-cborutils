@@ -23,13 +23,17 @@ contract('CBOR', function(accounts) {
       '67' + // text(7)
       '6269676e756d73' + // "bignums"
       '9f' + // array(*)
+      'c2' + // tag(2) == unsigned bignum
       '49' + // bytes(9)
       '010000000000000000' + // int(18446744073709551616)
+      'c2' + // tag(2) == unsigned bignum
       '5820' + // bytes(32)
       '4000000000000000000000000000000000000000000000000000000000000000' + // int(28948022309329048855892746252171976963317496166410141009864396001978282409984)
-      '68' + // text(8)
+      'c3' + // tag(3) == signed bignum
+      '48' + // bytes(8)
       'ffffffffffffffff' + // int(18446744073709551615)
-      '7820' + // string(32)
+      'c3' + // tag(3) == signed bignum
+      '5820' + // bytes(32)
       '3fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff' // int(28948022309329048855892746252171976963317496166410141009864396001978282409983)
     );
   });
