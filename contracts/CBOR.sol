@@ -44,7 +44,7 @@ library CBOR {
     }
 
     function encodeInt(Buffer.buffer memory buf, int value) internal pure {
-        if(value < -10000000000000000) {
+        if(value < -0x10000000000000000) {
             encodeSignedBigNum(buf, value);
         } else if(value > 0xFFFFFFFFFFFFFFFF) {
             encodeBigNum(buf, value);
