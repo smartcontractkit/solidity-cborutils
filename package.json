@@ -17,7 +17,7 @@
     "cbor": ">=4.0.0",
     "ganache-cli": "latest",
     "solium": "^1.2.3",
-    "truffle": "^4.1.13"
+    "truffle": "^5"
   },
   "files": [
     "contracts"
