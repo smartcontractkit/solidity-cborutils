@@ -1,4 +1,4 @@
-pragma solidity ^0.4.19;
+pragma solidity >= 0.4.19 < 0.7.0;
 
 import "@ensdomains/buffer/contracts/Buffer.sol";
 import "../contracts/CBOR.sol";
@@ -6,7 +6,7 @@ import "../contracts/CBOR.sol";
 contract TestCBOR {
     using CBOR for Buffer.buffer;
 
-    function getTestData() public pure returns(bytes) {
+    function getTestData() public pure returns(bytes memory) {
         Buffer.buffer memory buf;
         Buffer.init(buf, 64);
 
@@ -41,7 +41,7 @@ contract TestCBOR {
         return buf.buf;
     }
 
-    function getTestDataBig() public pure returns(bytes) {
+    function getTestDataBig() public pure returns(bytes memory) {
         Buffer.buffer memory buf;
         Buffer.init(buf, 28);
 

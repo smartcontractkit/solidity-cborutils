@@ -1,4 +1,4 @@
-pragma solidity ^0.4.19;
+pragma solidity >= 0.4.19 < 0.7.0;
 
 import "@ensdomains/buffer/contracts/Buffer.sol";
 
@@ -55,7 +55,7 @@ library CBOR {
         }
     }
 
-    function encodeBytes(Buffer.buffer memory buf, bytes value) internal pure {
+    function encodeBytes(Buffer.buffer memory buf, bytes memory value) internal pure {
         encodeType(buf, MAJOR_TYPE_BYTES, value.length);
         buf.append(value);
     }
@@ -70,7 +70,7 @@ library CBOR {
       encodeBytes(buf, encodeUnsignedBigNum(uint(-1 - input)));
     }
 
-    function encodeUnsignedBigNum(uint value) internal pure returns (bytes) {
+    function encodeUnsignedBigNum(uint value) internal pure returns (bytes memory) {
       uint8 size = byteCount(value);
       bytes memory significantBytes = new bytes(size);
       bytes memory encoded = abi.encodePacked(value);
@@ -110,7 +110,7 @@ library CBOR {
         return count;
     }
 
-    function encodeString(Buffer.buffer memory buf, string value) internal pure {
+    function encodeString(Buffer.buffer memory buf, string memory value) internal pure {
         encodeType(buf, MAJOR_TYPE_STRING, bytes(value).length);
         buf.append(bytes(value));
     }
