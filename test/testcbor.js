@@ -17,24 +17,31 @@ contract('CBOR', function(accounts) {
     var test = await TestCBOR.new();
     var result = await test.getTestDataBig();
 
-    // js CBOR library doesn't support negative bignum encodings as described in the RFC, so we have to verify the raw codes
+    // js CBOR library doesn't support negative bignum encodings as described
+    // in the RFC, so we have to verify the raw codes
     assert.equal(result, '0x' +
-      'bf' + // map(*)
-      '67' + // text(7)
-      '6269676e756d73' + // "bignums"
-      '9f' + // array(*)
-      'c2' + // tag(2) == unsigned bignum
-      '49' + // bytes(9)
-      '010000000000000000' + // int(18446744073709551616)
-      'c2' + // tag(2) == unsigned bignum
-      '5820' + // bytes(32)
-      '4000000000000000000000000000000000000000000000000000000000000000' + // int(28948022309329048855892746252171976963317496166410141009864396001978282409984)
-      'c3' + // tag(3) == signed bignum
-      '49' + // bytes(9)
-      '010000000000000000' + // int(18446744073709551616)
-      'c3' + // tag(3) == signed bignum
-      '5820' + // bytes(32)
-      '3fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff' // int(28948022309329048855892746252171976963317496166410141009864396001978282409983)
+      'bf' +              // map(*)
+      '67' +              // text(7)
+      '6269676e756d73' +  // "bignums"
+      '9f' +              // array(*)
+      'c2' +              // tag(2) == unsigned bignum
+      '5820' +            // bytes(32)
+      '0000000000000000000000000000000000000000000000010000000000000000' +
+                          // int(18446744073709551616)
+      'c2' +              // tag(2) == unsigned bignum
+      '5820' +            // bytes(32)
+      '4000000000000000000000000000000000000000000000000000000000000000' +
+                          // int(28948022309329048855892746252171976963317496166410141009864396001978282409984)
+      'c3' +              // tag(3) == signed bignum
+      '5820' +            // bytes(32)
+      '0000000000000000000000000000000000000000000000010000000000000000' +
+                          // int(18446744073709551616)
+      'c3' +              // tag(3) == signed bignum
+      '5820' +            // bytes(32)
+      '3fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff' +
+                          // int(28948022309329048855892746252171976963317496166410141009864396001978282409983)
+      'ff' +              // primitive(*)
+      'ff'                // primitive(*)
     );
   });
 });

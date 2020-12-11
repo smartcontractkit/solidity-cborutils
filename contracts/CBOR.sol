@@ -62,52 +62,12 @@ library CBOR {
 
     function encodeBigNum(Buffer.buffer memory buf, int value) internal pure {
       buf.appendUint8(uint8((MAJOR_TYPE_TAG << 5) | TAG_TYPE_BIGNUM));
-      encodeBytes(buf, encodeUnsignedBigNum(uint(value)));
+      encodeBytes(buf, abi.encode(uint(value)));
     }
 
     function encodeSignedBigNum(Buffer.buffer memory buf, int input) internal pure {
       buf.appendUint8(uint8((MAJOR_TYPE_TAG << 5) | TAG_TYPE_NEGATIVE_BIGNUM));
-      encodeBytes(buf, encodeUnsignedBigNum(uint(-1 - input)));
-    }
-
-    function encodeUnsignedBigNum(uint value) internal pure returns (bytes memory) {
-      uint8 size = byteCount(value);
-      bytes memory significantBytes = new bytes(size);
-      bytes memory encoded = abi.encodePacked(value);
-      uint8 offset = 32 - size;
-      for (uint8 i = 0; i < significantBytes.length; i++) {
-          significantBytes[i]  = encoded[offset + i];
-      }
-      return significantBytes;
-    }
-
-    function byteCount(uint256 input) internal pure returns (uint8) {
-        uint8 count = 0;
-        uint256 value = input;
-        if (value >> 128 > 0) {
-            value = value >> 128;
-            count = 16;
-        }
-        if (value >> 64 > 0) {
-            value = value >> 64;
-            count += 8;
-        }
-        if (value >> 32 > 0) {
-            value = value >> 32;
-            count += 4;
-        }
-        if (value >> 16 > 0) {
-            value = value >> 16;
-            count += 2;
-        }
-        if (value >> 8 > 0) {
-            value = value >> 8;
-            count += 1;
-        }
-        if (value > 0) {
-            count += 1;
-        }
-        return count;
+      encodeBytes(buf, abi.encode(uint(-1 - input)));
     }
 
     function encodeString(Buffer.buffer memory buf, string memory value) internal pure {
