@@ -14,9 +14,9 @@
   },
   "version": "1.0.5",
   "devDependencies": {
-    "cbor": ">=4.0.0",
+    "cbor": ">=5.0.0",
     "ganache-cli": "latest",
-    "solium": "^1.2.3",
+    "solium": "^1.2.5",
     "truffle": "^5"
   },
   "files": [

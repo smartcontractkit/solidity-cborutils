@@ -1,4 +1,4 @@
-pragma solidity ^0.4.19;
+pragma solidity >= 0.4.19 < 0.7.0;
 
 import "@ensdomains/buffer/contracts/Buffer.sol";
 
@@ -11,7 +11,11 @@ library CBOR {
     uint8 private constant MAJOR_TYPE_STRING = 3;
     uint8 private constant MAJOR_TYPE_ARRAY = 4;
     uint8 private constant MAJOR_TYPE_MAP = 5;
+    uint8 private constant MAJOR_TYPE_TAG = 6;
     uint8 private constant MAJOR_TYPE_CONTENT_FREE = 7;
+
+    uint8 private constant TAG_TYPE_BIGNUM = 2;
+    uint8 private constant TAG_TYPE_NEGATIVE_BIGNUM = 3;
 
     function encodeType(Buffer.buffer memory buf, uint8 major, uint value) private pure {
         if(value <= 23) {
@@ -40,19 +44,33 @@ library CBOR {
     }
 
     function encodeInt(Buffer.buffer memory buf, int value) internal pure {
-        if(value >= 0) {
+        if(value < -0x10000000000000000) {
+            encodeSignedBigNum(buf, value);
+        } else if(value > 0xFFFFFFFFFFFFFFFF) {
+            encodeBigNum(buf, value);
+        } else if(value >= 0) {
             encodeType(buf, MAJOR_TYPE_INT, uint(value));
         } else {
             encodeType(buf, MAJOR_TYPE_NEGATIVE_INT, uint(-1 - value));
         }
     }
 
-    function encodeBytes(Buffer.buffer memory buf, bytes value) internal pure {
+    function encodeBytes(Buffer.buffer memory buf, bytes memory value) internal pure {
         encodeType(buf, MAJOR_TYPE_BYTES, value.length);
         buf.append(value);
     }
 
-    function encodeString(Buffer.buffer memory buf, string value) internal pure {
+    function encodeBigNum(Buffer.buffer memory buf, int value) internal pure {
+      buf.appendUint8(uint8((MAJOR_TYPE_TAG << 5) | TAG_TYPE_BIGNUM));
+      encodeBytes(buf, abi.encode(uint(value)));
+    }
+
+    function encodeSignedBigNum(Buffer.buffer memory buf, int input) internal pure {
+      buf.appendUint8(uint8((MAJOR_TYPE_TAG << 5) | TAG_TYPE_NEGATIVE_BIGNUM));
+      encodeBytes(buf, abi.encode(uint(-1 - input)));
+    }
+
+    function encodeString(Buffer.buffer memory buf, string memory value) internal pure {
         encodeType(buf, MAJOR_TYPE_STRING, bytes(value).length);
         buf.append(bytes(value));
     }

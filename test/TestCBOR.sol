@@ -1,4 +1,4 @@
-pragma solidity ^0.4.19;
+pragma solidity >= 0.4.19 < 0.7.0;
 
 import "@ensdomains/buffer/contracts/Buffer.sol";
 import "../contracts/CBOR.sol";
@@ -6,7 +6,7 @@ import "../contracts/CBOR.sol";
 contract TestCBOR {
     using CBOR for Buffer.buffer;
 
-    function getTestData() public pure returns(bytes) {
+    function getTestData() public pure returns(bytes memory) {
         Buffer.buffer memory buf;
         Buffer.init(buf, 64);
 
@@ -36,6 +36,24 @@ contract TestCBOR {
         buf.encodeInt(-42);
 
         buf.endSequence();
+        buf.endSequence();
+
+        return buf.buf;
+    }
+
+    function getTestDataBig() public pure returns(bytes memory) {
+        Buffer.buffer memory buf;
+        Buffer.init(buf, 28);
+
+        buf.startMap();
+        buf.encodeString("bignums");
+        buf.startArray();
+        buf.encodeInt(18446744073709551616);
+        buf.encodeInt(28948022309329048855892746252171976963317496166410141009864396001978282409984);
+        buf.encodeInt(-18446744073709551617);
+        buf.encodeInt(-28948022309329048855892746252171976963317496166410141009864396001978282409984);
+        buf.endSequence();
+
         buf.endSequence();
 
         return buf.buf;
