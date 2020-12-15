@@ -12,7 +12,7 @@
     "type": "git",
     "url": "https://github.com/smartcontractkit/solidity-cborutils.git"
   },
-  "version": "1.0.5",
+  "version": "1.0.6",
   "devDependencies": {
     "cbor": ">=5.0.0",
     "ganache-cli": "latest",

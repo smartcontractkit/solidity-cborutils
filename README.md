@@ -1,4 +1,4 @@
-# solidity-cborutils [![CircleCI](https://circleci.com/gh/smartcontractkit/solidity-cborutils.svg?style=shield)](https://circleci.com/gh/smartcontractkit/solidity-cborutils)
+# solidity-cborutils [![GitHub workflow changelog](https://img.shields.io/github/workflow/status/smartcontractkit/solidity-cborutils/CI?style=flat-square&label=github-actions)](https://github.com/smartcontractkit/solidity-cborutils/actions?query=workflow%3ACI)
 Utilities for encoding [CBOR](http://cbor.io/) data in solidity
 
 ## Install
@@ -6,7 +6,7 @@ Utilities for encoding [CBOR](http://cbor.io/) data in solidity
 ```bash
 $ git clone https://github.com/smartcontractkit/solidity-cborutils.git
 $ cd solidity-cborutils
-$ npm install
+$ yarn install
 ```
 ## Usage
 
@@ -18,5 +18,5 @@ In order to persist a Buffer in storage from memory,
 ## Test
 
 ```bash
-$ truffle test
+$ yarn test
 ```
