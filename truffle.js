@@ -1,16 +1,17 @@
-var ganache = require('ganache-cli');
-
 module.exports = {
-  network: 'test',
   networks: {
-    development: {
-      host: '127.0.0.1',
-      port: 18545,
-      network_id: '*' // Match any network id
-    },
-    ganache_cli: {
-      provider: ganache.provider(),
-      network_id: '*'
+    local: {
+      host: "localhost",
+      port: 9545,
+      network_id: "*",
+      gas: 4000000,
+    }
+  },
+  mocha: {
+    reporter: 'eth-gas-reporter',
+    reporterOptions : {
+      currency: 'USD',
+      gasPrice: 1
     }
   },
   compilers: {

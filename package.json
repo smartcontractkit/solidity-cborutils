@@ -1,12 +1,13 @@
 {
   "dependencies": {
-    "@ensdomains/buffer": "0.0.10"
+    "@ensdomains/buffer": "0.0.10",
+    "eth-gas-reporter": "^0.2.20"
   },
   "homepage": "https://github.com/smartcontractkit/solidity-cborutils",
   "license": "MIT",
   "name": "solidity-cborutils",
   "scripts": {
-    "test": "truffle test --network=ganache_cli"
+    "test": "truffle test"
   },
   "repository": {
     "type": "git",
@@ -15,7 +16,6 @@
   "version": "1.0.6",
   "devDependencies": {
     "cbor": ">=5.0.0",
-    "ganache-cli": "latest",
     "solium": "^1.2.5",
     "truffle": "^5"
   },
