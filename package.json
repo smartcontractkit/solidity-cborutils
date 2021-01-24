@@ -1,12 +1,16 @@
 {
   "dependencies": {
-    "@ensdomains/buffer": "0.0.10"
+    "@ensdomains/buffer": "0.0.10",
+    "@nomiclabs/hardhat-truffle5": "^2.0.0",
+    "@nomiclabs/hardhat-web3": "^2.0.0",
+    "hardhat": "^2.0.6",
+    "hardhat-gas-reporter": "^1.0.4"
   },
   "homepage": "https://github.com/smartcontractkit/solidity-cborutils",
   "license": "MIT",
   "name": "solidity-cborutils",
   "scripts": {
-    "test": "truffle test --network=ganache_cli"
+    "test": "hardhat test"
   },
   "repository": {
     "type": "git",
@@ -15,7 +19,6 @@
   "version": "1.0.6",
   "devDependencies": {
     "cbor": ">=5.0.0",
-    "ganache-cli": "latest",
     "solium": "^1.2.5",
     "truffle": "^5"
   },
