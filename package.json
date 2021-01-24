@@ -16,7 +16,7 @@
     "type": "git",
     "url": "https://github.com/smartcontractkit/solidity-cborutils.git"
   },
-  "version": "1.0.6",
+  "version": "1.0.7",
   "devDependencies": {
     "cbor": ">=5.0.0",
     "solium": "^1.2.5",
