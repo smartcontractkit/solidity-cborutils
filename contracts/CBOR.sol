@@ -17,7 +17,7 @@ library CBOR {
     uint8 private constant TAG_TYPE_BIGNUM = 2;
     uint8 private constant TAG_TYPE_NEGATIVE_BIGNUM = 3;
 
-    function encodeType(Buffer.buffer memory buf, uint8 major, uint value) private pure {
+    function encodeFixedNumeric(Buffer.buffer memory buf, uint8 major, uint64 value) private pure {
         if(value <= 23) {
             buf.appendUint8(uint8((major << 5) | value));
         } else if(value <= 0xFF) {
@@ -29,7 +29,7 @@ library CBOR {
         } else if(value <= 0xFFFFFFFF) {
             buf.appendUint8(uint8((major << 5) | 26));
             buf.appendInt(value, 4);
-        } else if(value <= 0xFFFFFFFFFFFFFFFF) {
+        } else {
             buf.appendUint8(uint8((major << 5) | 27));
             buf.appendInt(value, 8);
         }
@@ -40,29 +40,33 @@ library CBOR {
     }
 
     function encodeUInt(Buffer.buffer memory buf, uint value) internal pure {
-        encodeType(buf, MAJOR_TYPE_INT, value);
+        if(value > 0xFFFFFFFFFFFFFFFF) {
+            encodeBigNum(buf, value);
+        } else {
+            encodeFixedNumeric(buf, MAJOR_TYPE_INT, uint64(value));
+        }
     }
 
     function encodeInt(Buffer.buffer memory buf, int value) internal pure {
         if(value < -0x10000000000000000) {
             encodeSignedBigNum(buf, value);
         } else if(value > 0xFFFFFFFFFFFFFFFF) {
-            encodeBigNum(buf, value);
+            encodeBigNum(buf, uint(value));
         } else if(value >= 0) {
-            encodeType(buf, MAJOR_TYPE_INT, uint(value));
+            encodeFixedNumeric(buf, MAJOR_TYPE_INT, uint64(value));
         } else {
-            encodeType(buf, MAJOR_TYPE_NEGATIVE_INT, uint(-1 - value));
+            encodeFixedNumeric(buf, MAJOR_TYPE_NEGATIVE_INT, uint64(-1 - value));
         }
     }
 
     function encodeBytes(Buffer.buffer memory buf, bytes memory value) internal pure {
-        encodeType(buf, MAJOR_TYPE_BYTES, value.length);
+        encodeFixedNumeric(buf, MAJOR_TYPE_BYTES, uint64(value.length));
         buf.append(value);
     }
 
-    function encodeBigNum(Buffer.buffer memory buf, int value) internal pure {
+    function encodeBigNum(Buffer.buffer memory buf, uint value) internal pure {
       buf.appendUint8(uint8((MAJOR_TYPE_TAG << 5) | TAG_TYPE_BIGNUM));
-      encodeBytes(buf, abi.encode(uint(value)));
+      encodeBytes(buf, abi.encode(value));
     }
 
     function encodeSignedBigNum(Buffer.buffer memory buf, int input) internal pure {
@@ -71,7 +75,7 @@ library CBOR {
     }
 
     function encodeString(Buffer.buffer memory buf, string memory value) internal pure {
-        encodeType(buf, MAJOR_TYPE_STRING, bytes(value).length);
+        encodeFixedNumeric(buf, MAJOR_TYPE_STRING, uint64(bytes(value).length));
         buf.append(bytes(value));
     }
 

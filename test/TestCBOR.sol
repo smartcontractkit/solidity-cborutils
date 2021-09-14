@@ -41,7 +41,7 @@ contract TestCBOR {
         return buf.buf;
     }
 
-    function getTestDataBig() public pure returns(bytes memory) {
+    function getTestDataBigInt() public pure returns(bytes memory) {
         Buffer.buffer memory buf;
         Buffer.init(buf, 28);
 
@@ -52,6 +52,23 @@ contract TestCBOR {
         buf.encodeInt(28948022309329048855892746252171976963317496166410141009864396001978282409984);
         buf.encodeInt(-18446744073709551617);
         buf.encodeInt(-28948022309329048855892746252171976963317496166410141009864396001978282409984);
+        buf.endSequence();
+
+        buf.endSequence();
+
+        return buf.buf;
+    }
+
+    function getTestDataBigUint() public pure returns(bytes memory) {
+        Buffer.buffer memory buf;
+        Buffer.init(buf, 28);
+
+        buf.startMap();
+        buf.encodeString("ubignums");
+        buf.startArray();
+        buf.encodeUInt(18446744073709551616);
+        buf.encodeUInt(28948022309329048855892746252171976963317496166410141009864396001978282409984);
+        buf.encodeUInt(115792089237316195423570985008687907853269984665640564039457584007913129639935);
         buf.endSequence();
 
         buf.endSequence();
