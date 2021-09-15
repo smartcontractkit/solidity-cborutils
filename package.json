@@ -10,7 +10,8 @@
   "license": "MIT",
   "name": "solidity-cborutils",
   "scripts": {
-    "test": "hardhat test"
+    "test": "hardhat test",
+    "lint:sol": "solhint -f table **/*.sol"
   },
   "repository": {
     "type": "git",
@@ -19,6 +20,7 @@
   "version": "1.0.7",
   "devDependencies": {
     "cbor": ">=5.0.0",
+    "solhint": "^3.3.6",
     "solium": "^1.2.5",
     "truffle": "^5"
   },
