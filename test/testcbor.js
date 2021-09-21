@@ -4,7 +4,7 @@ const cbor = require('cbor');
 contract('CBOR', function(accounts) {
   it('returns valid CBOR-encoded data', async function() {
     var test = await TestCBOR.new();
-    var result = new Buffer((await test.getTestData()).slice(2), 'hex');
+    var result = new Buffer.from((await test.getTestData()).slice(2), 'hex');
     var decoded = await cbor.decodeFirst(result);
     assert.deepEqual(decoded, {
       'key1': 'value1',
