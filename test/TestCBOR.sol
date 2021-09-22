@@ -25,6 +25,7 @@ contract TestCBOR {
         buf.encodeString("array");
         buf.startArray();
         buf.encodeInt(0);
+        buf.encodeInt(1);
         buf.encodeInt(23);
         buf.encodeInt(24);
 
@@ -44,17 +45,18 @@ contract TestCBOR {
 
     function getTestDataBigInt() public pure returns(bytes memory) {
         Buffer.buffer memory buf;
-        Buffer.init(buf, 28);
+        Buffer.init(buf, 128);
 
-        buf.startMap();
-        buf.encodeString("bignums");
         buf.startArray();
-        buf.encodeInt(18446744073709551616);
-        buf.encodeInt(28948022309329048855892746252171976963317496166410141009864396001978282409984);
-        buf.encodeInt(-18446744073709551617);
-        buf.encodeInt(-28948022309329048855892746252171976963317496166410141009864396001978282409984);
-        buf.endSequence();
-
+        buf.encodeInt(type(int256).min);
+        buf.encodeInt(type(int256).min+1);
+        buf.encodeInt(int256(type(int64).min)-1);
+        buf.encodeInt(int256(type(int64).min)+1);
+        buf.encodeInt(type(int64).min);
+        buf.encodeInt(type(int64).max);
+        buf.encodeInt(int256(type(int64).max)+1);
+        buf.encodeInt(type(int256).max-1);
+        buf.encodeInt(type(int256).max);
         buf.endSequence();
 
         return buf.buf;
@@ -62,16 +64,14 @@ contract TestCBOR {
 
     function getTestDataBigUint() public pure returns(bytes memory) {
         Buffer.buffer memory buf;
-        Buffer.init(buf, 28);
+        Buffer.init(buf, 128);
 
-        buf.startMap();
-        buf.encodeString("ubignums");
         buf.startArray();
-        buf.encodeUInt(18446744073709551616);
-        buf.encodeUInt(28948022309329048855892746252171976963317496166410141009864396001978282409984);
-        buf.encodeUInt(115792089237316195423570985008687907853269984665640564039457584007913129639935);
-        buf.endSequence();
-
+        buf.encodeUInt(0);
+        buf.encodeUInt(type(uint64).max);
+        buf.encodeUInt(uint256(type(uint64).max)+1);
+        buf.encodeUInt(type(uint256).max-1);
+        buf.encodeUInt(type(uint256).max);
         buf.endSequence();
 
         return buf.buf;

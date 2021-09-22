@@ -9,7 +9,7 @@ contract('CBOR', function(accounts) {
     assert.deepEqual(decoded, {
       'key1': 'value1',
       'long': 'This string is longer than 24 characters.',
-      'array': [0, 23, 24, 0x100, 0x10000, 0x100000000, -42]
+      'array': [0, 1, 23, 24, 0x100, 0x10000, 0x100000000, -42]
     });
   });
 
@@ -20,28 +20,25 @@ contract('CBOR', function(accounts) {
     // js CBOR library doesn't support negative bignum encodings as described
     // in the RFC, so we have to verify the raw codes
     assert.equal(result, '0x' +
-      'bf' +              // map(*)
-      '67' +              // text(7)
-      '6269676e756d73' +  // "bignums"
-      '9f' +              // array(*)
-      'c2' +              // tag(2) == unsigned bignum
-      '5820' +            // bytes(32)
-      '0000000000000000000000000000000000000000000000010000000000000000' +
-                          // int(18446744073709551616)
-      'c2' +              // tag(2) == unsigned bignum
-      '5820' +            // bytes(32)
-      '4000000000000000000000000000000000000000000000000000000000000000' +
-                          // int(28948022309329048855892746252171976963317496166410141009864396001978282409984)
-      'c3' +              // tag(3) == signed bignum
-      '5820' +            // bytes(32)
-      '0000000000000000000000000000000000000000000000010000000000000000' +
-                          // int(18446744073709551616)
-      'c3' +              // tag(3) == signed bignum
-      '5820' +            // bytes(32)
-      '3fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff' +
-                          // int(28948022309329048855892746252171976963317496166410141009864396001978282409983)
-      'ff' +              // primitive(*)
-      'ff'                // primitive(*)
+      '9f' +                                       // array(*)
+        'c3' +                                     // tag(3)
+          '58' + '20' +                            // bytes(32)
+            '7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff' +   // "\x7F\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF"
+        'c3' +                                     // tag(3)
+          '58' + '20' +                            // bytes(32)
+            '7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe' +   // "\x7F\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFE"
+        '3b' + '8000000000000000' +                // negative(9223372036854775808)
+        '3b' + '7ffffffffffffffe' +                // negative(9223372036854775806)
+        '3b' + '7fffffffffffffff' +                // negative(9223372036854775807)
+        '1b' + '7fffffffffffffff' +                // unsigned(9223372036854775807)
+        '1b' + '8000000000000000' +                // unsigned(9223372036854775808)
+        'c2' +                                     // tag(2)
+          '58' + '20' +                            // bytes(32)
+            '7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe' +   // "\x7F\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFE"
+        'c2' +                                     // tag(2)
+          '58' + '20' +                            // bytes(32)
+            '7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff' +   // "\x7F\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF"
+      'ff'                                         // primitive(*)
     );
   });
 
@@ -51,28 +48,20 @@ contract('CBOR', function(accounts) {
 
     // js CBOR library doesn't support negative bignum encodings as described
     // in the RFC, so we have to verify the raw codes
-    // bf
-    // 68
-    // 756269676e756d739fc2582
     assert.equal(result, '0x' +
-      'bf' +                // map(*)
-      '68' +                // text(7)
-      '756269676e756d73' +  // "ubignums"
-      '9f' +                // array(*)
-      'c2' +                // tag(2) == unsigned bignum
-      '5820' +              // bytes(32)
-      '0000000000000000000000000000000000000000000000010000000000000000' +
-                            // uint(18446744073709551616)
-      'c2' +                // tag(2) == unsigned bignum
-      '5820' +              // bytes(32)
-      '4000000000000000000000000000000000000000000000000000000000000000' +
-                            // uint(28948022309329048855892746252171976963317496166410141009864396001978282409984)
-      'c2' +                // tag(2) == unsigned bignum
-      '5820' +              // bytes(32)
-      'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff' +
-                            // uint(115792089237316195423570985008687907853269984665640564039457584007913129639935)
-      'ff' +                // primitive(*)
-      'ff'                  // primitive(*)
+      '9f' +                                       // array(*)
+        '00' +                                     // unsigned(0)
+        '1b' + 'ffffffffffffffff' +                // unsigned(18446744073709551615)
+        'c2' +                                     // tag(2)
+          '58' + '20' +                            // bytes(32)
+            '0000000000000000000000000000000000000000000000010000000000000000' + // "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00"
+        'c2' +                                     // tag(2)
+          '58' + '20' +                            // bytes(32)
+            'fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe' + // "\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFE"
+        'c2' +                                     // tag(2)
+          '58' + '20' +                            // bytes(32)
+            'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff' + // "\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF"
+      'ff'                                         // primitive(*)
     );
   });
 });
