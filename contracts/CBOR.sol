@@ -1,10 +1,15 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >= 0.4.19 < 0.9.0;
+pragma solidity >=0.4.19 <0.9.0;
 
 import "@ensdomains/buffer/contracts/Buffer.sol";
 
 library CBOR {
     using Buffer for Buffer.buffer;
+
+    struct CBORBuffer {
+        Buffer.buffer buf;
+        uint256 depth;
+    }
 
     uint8 private constant MAJOR_TYPE_INT = 0;
     uint8 private constant MAJOR_TYPE_NEGATIVE_INT = 1;
@@ -18,77 +23,187 @@ library CBOR {
     uint8 private constant TAG_TYPE_BIGNUM = 2;
     uint8 private constant TAG_TYPE_NEGATIVE_BIGNUM = 3;
 
-    function encodeFixedNumeric(Buffer.buffer memory buf, uint8 major, uint64 value) private pure {
-        if(value <= 23) {
-            buf.appendUint8(uint8((major << 5) | value));
-        } else if(value <= 0xFF) {
-            buf.appendUint8(uint8((major << 5) | 24));
-            buf.appendInt(value, 1);
-        } else if(value <= 0xFFFF) {
-            buf.appendUint8(uint8((major << 5) | 25));
-            buf.appendInt(value, 2);
-        } else if(value <= 0xFFFFFFFF) {
-            buf.appendUint8(uint8((major << 5) | 26));
-            buf.appendInt(value, 4);
+    uint8 private constant CBOR_FALSE = 20;
+    uint8 private constant CBOR_TRUE = 21;
+    uint8 private constant CBOR_NULL = 22;
+    uint8 private constant CBOR_UNDEFINED = 23;
+
+    function create(uint256 capacity) internal pure returns(CBORBuffer memory cbor) {
+        Buffer.init(cbor.buf, capacity);
+        cbor.depth = 0;
+        return cbor;
+    }
+
+    function data(CBORBuffer memory buf) internal pure returns(bytes memory) {
+        require(buf.depth == 0, "Invalid CBOR");
+        return buf.buf.buf;
+    }
+
+    function writeUInt256(CBORBuffer memory buf, uint256 value) internal pure {
+        buf.buf.appendUint8(uint8((MAJOR_TYPE_TAG << 5) | TAG_TYPE_BIGNUM));
+        writeBytes(buf, abi.encode(value));
+    }
+
+    function writeInt256(CBORBuffer memory buf, int256 value) internal pure {
+        if (value < 0) {
+            buf.buf.appendUint8(
+                uint8((MAJOR_TYPE_TAG << 5) | TAG_TYPE_NEGATIVE_BIGNUM)
+            );
+            writeBytes(buf, abi.encode(uint256(-1 - value)));
         } else {
-            buf.appendUint8(uint8((major << 5) | 27));
-            buf.appendInt(value, 8);
+            writeUInt256(buf, uint256(value));
         }
     }
 
-    function encodeIndefiniteLengthType(Buffer.buffer memory buf, uint8 major) private pure {
-        buf.appendUint8(uint8((major << 5) | 31));
+    function writeUInt64(CBORBuffer memory buf, uint64 value) internal pure {
+        encodeFixedNumeric(buf, MAJOR_TYPE_INT, value);
     }
 
-    function encodeUInt(Buffer.buffer memory buf, uint value) internal pure {
-        if(value > 0xFFFFFFFFFFFFFFFF) {
-            encodeBigNum(buf, value);
-        } else {
+    function writeInt64(CBORBuffer memory buf, int64 value) internal pure {
+        if(value >= 0) {
             encodeFixedNumeric(buf, MAJOR_TYPE_INT, uint64(value));
+        } else{
+            encodeFixedNumeric(buf, MAJOR_TYPE_NEGATIVE_INT, uint64(-1 - value));
         }
     }
 
-    function encodeInt(Buffer.buffer memory buf, int value) internal pure {
-        if(value < -0x10000000000000000) {
-            encodeSignedBigNum(buf, value);
-        } else if(value > 0xFFFFFFFFFFFFFFFF) {
-            encodeBigNum(buf, uint(value));
-        } else if(value >= 0) {
-            encodeFixedNumeric(buf, MAJOR_TYPE_INT, uint64(uint256(value)));
-        } else {
-            encodeFixedNumeric(buf, MAJOR_TYPE_NEGATIVE_INT, uint64(uint256(-1 - value)));
-        }
-    }
-
-    function encodeBytes(Buffer.buffer memory buf, bytes memory value) internal pure {
+    function writeBytes(CBORBuffer memory buf, bytes memory value) internal pure {
         encodeFixedNumeric(buf, MAJOR_TYPE_BYTES, uint64(value.length));
-        buf.append(value);
+        buf.buf.append(value);
     }
 
-    function encodeBigNum(Buffer.buffer memory buf, uint value) internal pure {
-      buf.appendUint8(uint8((MAJOR_TYPE_TAG << 5) | TAG_TYPE_BIGNUM));
-      encodeBytes(buf, abi.encode(value));
-    }
-
-    function encodeSignedBigNum(Buffer.buffer memory buf, int input) internal pure {
-      buf.appendUint8(uint8((MAJOR_TYPE_TAG << 5) | TAG_TYPE_NEGATIVE_BIGNUM));
-      encodeBytes(buf, abi.encode(uint(-1 - input)));
-    }
-
-    function encodeString(Buffer.buffer memory buf, string memory value) internal pure {
+    function writeString(CBORBuffer memory buf, string memory value) internal pure {
         encodeFixedNumeric(buf, MAJOR_TYPE_STRING, uint64(bytes(value).length));
-        buf.append(bytes(value));
+        buf.buf.append(bytes(value));
     }
 
-    function startArray(Buffer.buffer memory buf) internal pure {
+    function writeBool(CBORBuffer memory buf, bool value) internal pure {
+        encodeContentFree(buf, value ? CBOR_TRUE : CBOR_FALSE);
+    }
+
+    function writeNull(CBORBuffer memory buf) internal pure {
+        encodeContentFree(buf, CBOR_NULL);
+    }
+
+    function writeUndefined(CBORBuffer memory buf) internal pure {
+        encodeContentFree(buf, CBOR_UNDEFINED);
+    }
+
+    function startArray(CBORBuffer memory buf) internal pure {
         encodeIndefiniteLengthType(buf, MAJOR_TYPE_ARRAY);
+        buf.depth += 1;
     }
 
-    function startMap(Buffer.buffer memory buf) internal pure {
+    function startFixedArray(CBORBuffer memory buf, uint64 length) internal pure {
+        encodeDefiniteLengthType(buf, MAJOR_TYPE_ARRAY, length);
+    }
+
+    function startMap(CBORBuffer memory buf) internal pure {
         encodeIndefiniteLengthType(buf, MAJOR_TYPE_MAP);
+        buf.depth += 1;
     }
 
-    function endSequence(Buffer.buffer memory buf) internal pure {
+    function startFixedMap(CBORBuffer memory buf, uint64 length) internal pure {
+        encodeDefiniteLengthType(buf, MAJOR_TYPE_MAP, length);
+    }
+
+    function endSequence(CBORBuffer memory buf) internal pure {
         encodeIndefiniteLengthType(buf, MAJOR_TYPE_CONTENT_FREE);
+        buf.depth -= 1;
+    }
+
+    function writeKVString(CBORBuffer memory buf, string memory key, string memory value) internal pure {
+        writeString(buf, key);
+        writeString(buf, value);
+    }
+
+    function writeKVBytes(CBORBuffer memory buf, string memory key, bytes memory value) internal pure {
+        writeString(buf, key);
+        writeBytes(buf, value);
+    }
+
+    function writeKVUInt256(CBORBuffer memory buf, string memory key, uint256 value) internal pure {
+        writeString(buf, key);
+        writeUInt256(buf, value);
+    }
+
+    function writeKVInt256(CBORBuffer memory buf, string memory key, int256 value) internal pure {
+        writeString(buf, key);
+        writeInt256(buf, value);
+    }
+
+    function writeKVUInt64(CBORBuffer memory buf, string memory key, uint64 value) internal pure {
+        writeString(buf, key);
+        writeUInt64(buf, value);
+    }
+
+    function writeKVInt64(CBORBuffer memory buf, string memory key, int64 value) internal pure {
+        writeString(buf, key);
+        writeInt64(buf, value);
+    }
+
+    function writeKVBool(CBORBuffer memory buf, string memory key, bool value) internal pure {
+        writeString(buf, key);
+        writeBool(buf, value);
+    }
+
+    function writeKVNull(CBORBuffer memory buf, string memory key) internal pure {
+        writeString(buf, key);
+        writeNull(buf);
+    }
+
+    function writeKVUndefined(CBORBuffer memory buf, string memory key) internal pure {
+        writeString(buf, key);
+        writeUndefined(buf);
+    }
+
+    function writeKVMap(CBORBuffer memory buf, string memory key) internal pure {
+        writeString(buf, key);
+        startMap(buf);
+    }
+
+    function writeKVArray(CBORBuffer memory buf, string memory key) internal pure {
+        writeString(buf, key);
+        startArray(buf);
+    }
+
+    function encodeFixedNumeric(
+        CBORBuffer memory buf,
+        uint8 major,
+        uint64 value
+    ) private pure {
+        if (value <= 23) {
+            buf.buf.appendUint8(uint8((major << 5) | value));
+        } else if (value <= 0xFF) {
+            buf.buf.appendUint8(uint8((major << 5) | 24));
+            buf.buf.appendInt(value, 1);
+        } else if (value <= 0xFFFF) {
+            buf.buf.appendUint8(uint8((major << 5) | 25));
+            buf.buf.appendInt(value, 2);
+        } else if (value <= 0xFFFFFFFF) {
+            buf.buf.appendUint8(uint8((major << 5) | 26));
+            buf.buf.appendInt(value, 4);
+        } else {
+            buf.buf.appendUint8(uint8((major << 5) | 27));
+            buf.buf.appendInt(value, 8);
+        }
+    }
+
+    function encodeIndefiniteLengthType(CBORBuffer memory buf, uint8 major)
+        private
+        pure
+    {
+        buf.buf.appendUint8(uint8((major << 5) | 31));
+    }
+
+    function encodeDefiniteLengthType(CBORBuffer memory buf, uint8 major, uint64 length)
+        private
+        pure
+    {
+        encodeFixedNumeric(buf, major, length);
+    }
+
+    function encodeContentFree(CBORBuffer memory buf, uint8 value) private pure {
+        buf.buf.appendUint8(uint8((MAJOR_TYPE_CONTENT_FREE << 5) | value));
     }
 }
