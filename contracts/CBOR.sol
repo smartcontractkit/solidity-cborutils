@@ -3,6 +3,19 @@ pragma solidity ^0.8.4;
 
 import "@ensdomains/buffer/contracts/Buffer.sol";
 
+/**
+* @dev A library for populating CBOR encoded payload in Solidity.
+*
+* https://datatracker.ietf.org/doc/html/rfc7049
+*
+* The library offers various write* and start* methods to encode values of different types.
+* The resulted buffer can be obtained with data() method.
+* Encoding of primitive types is staightforward, whereas encoding of sequences can result
+* in an invalid CBOR if start/write/end flow is violated.
+* For the purpose of gas saving, the library does not verify start/write/end flow internally,
+* except for nested start/end pairs.
+*/
+
 library CBOR {
     using Buffer for Buffer.buffer;
 
