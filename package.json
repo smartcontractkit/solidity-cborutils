@@ -1,10 +1,6 @@
 {
   "dependencies": {
-    "@ensdomains/buffer": "0.0.13",
-    "@nomiclabs/hardhat-truffle5": "^2.0.0",
-    "@nomiclabs/hardhat-web3": "^2.0.0",
-    "hardhat": "^2.0.6",
-    "hardhat-gas-reporter": "^1.0.4"
+    "@ensdomains/buffer": "0.0.13"
   },
   "homepage": "https://github.com/smartcontractkit/solidity-cborutils",
   "license": "MIT",
@@ -19,6 +15,10 @@
   },
   "version": "1.0.7",
   "devDependencies": {
+    "@nomiclabs/hardhat-truffle5": "^2.0.0",
+    "@nomiclabs/hardhat-web3": "^2.0.0",
+    "hardhat": "^2.0.6",
+    "hardhat-gas-reporter": "^1.0.4",
     "cbor": ">=5.0.0",
     "solhint": "^3.3.6",
     "solium": "^1.2.5",
