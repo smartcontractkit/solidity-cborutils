@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@ensdomains/buffer": "0.0.13"
+    "@ensdomains/buffer": "0.1.0"
   },
   "homepage": "https://github.com/smartcontractkit/solidity-cborutils",
   "license": "MIT",
